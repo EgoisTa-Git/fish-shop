@@ -40,15 +40,6 @@ def start(update, context):
     )
     reply_markup = InlineKeyboardMarkup(keyboard)
 
-    try:
-        query = update.callback_query
-        context.bot.delete_message(
-            query.message.chat_id,
-            query.message.message_id,
-        )
-    except AttributeError:
-        pass
-
     message = context.bot.send_message(
         text='Пожалуйста выберите товар:',
         chat_id=update.effective_chat.id,
@@ -58,6 +49,12 @@ def start(update, context):
         message_id=message.message_id,
         reply_markup=reply_markup,
     )
+    query = update.callback_query
+    if query:
+        context.bot.delete_message(
+            query.message.chat_id,
+            query.message.message_id,
+        )
     return HANDLE_MENU
 
 
@@ -268,4 +265,4 @@ if __name__ == '__main__':
     )
     dispatcher.add_handler(conv_handler)
     updater.start_polling()
-    updater.idle()
+    # updater.idle()
