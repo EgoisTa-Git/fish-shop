@@ -1,4 +1,5 @@
 import re
+from textwrap import dedent
 
 import requests
 from environs import Env
@@ -79,9 +80,13 @@ def handle_menu(update, context):
     response.raise_for_status()
     product_image = response.content
 
-    text = f"Выбран товар: {product_name} \
-    \n{product_price} per kg \n{product_description} \
-    \n{available_stock} in stock available"
+    text = f'''
+        Выбран товар: {product_name}
+        {product_price} per kg
+        {product_description}
+        {available_stock} in stock available
+    '''
+    text = dedent(text)
 
     context.bot.delete_message(query.message.chat_id, query.message.message_id)
 
@@ -118,17 +123,17 @@ def show_cart(update, context):
 
     context.bot.delete_message(query.message.chat_id, query.message.message_id)
 
-    text = 'Сейчас в корзине:\n'
-
     keyboard = []
+    text = ''
     for product in cart['data']:
-        text += f'\n{product["name"]}'
-        text += f'\n{product["description"]}'
         unit_price = product['unit_price']['amount'] / 100
-        text += f'\n${unit_price:.2f} per kg'
         price = product['value']['amount'] / 100
-        quantity = product['quantity']
-        text += f'\n{quantity}kg in cart for ${price:.2f}\n'
+        text += f'''
+            {product["name"]}
+            {product["description"]}
+            ${unit_price:.2f} per kg'
+            {product['quantity']}kg in cart for ${price:.2f}
+        '''
         keyboard.append(
             [
                 InlineKeyboardButton(
@@ -139,6 +144,8 @@ def show_cart(update, context):
         )
 
     total_price = cart['meta']['display_price']['with_tax']['formatted']
+    text = dedent(text)
+    text = 'Сейчас в корзине:\n' + text
     text += f'\nTotal: {total_price}'
 
     message = context.bot.send_message(
