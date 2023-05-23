@@ -88,8 +88,6 @@ def handle_menu(update, context):
     '''
     text = dedent(text)
 
-    context.bot.delete_message(query.message.chat_id, query.message.message_id)
-
     context.user_data['selected_product'] = query.data
     message = context.bot.send_photo(
         query.message.chat_id,
@@ -111,6 +109,9 @@ def handle_menu(update, context):
         message_id=message.message_id,
         reply_markup=reply_markup,
     )
+
+    context.bot.delete_message(query.message.chat_id, query.message.message_id)
+
     return HANDLE_DESCRIPTION
 
 
@@ -120,8 +121,6 @@ def show_cart(update, context):
         context.bot_data['access_token'],
         query.message.chat_id,
     )
-
-    context.bot.delete_message(query.message.chat_id, query.message.message_id)
 
     keyboard = []
     text = ''
@@ -162,6 +161,9 @@ def show_cart(update, context):
         message_id=message.message_id,
         reply_markup=reply_markup,
     )
+
+    context.bot.delete_message(query.message.chat_id, query.message.message_id)
+
     return HANDLE_CART
 
 
@@ -272,4 +274,4 @@ if __name__ == '__main__':
     )
     dispatcher.add_handler(conv_handler)
     updater.start_polling()
-    # updater.idle()
+    updater.idle()
